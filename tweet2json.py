@@ -6,7 +6,6 @@ import csv
 import json
 import logging
 import os
-import textwrap
 
 # Third party libraries.
 # If these are missing, try running the command provided to install them.
@@ -100,13 +99,9 @@ if __name__ == "__main__":
     auth_api = tw.API(auth)
 
     logger.info("Authenticated with your user data in `.env`.")
-    logger.info("Okay, getting who liked the status...")
+    logger.info("Getting the status...")
 
     tweet = auth_api.statuses_lookup([snowflake])[0]
     logger.debug(tweet)
 
-    if args.json:
-        with open("tweet.json", "w") as file:
-            json.dump(tweet._json, file, indent=4)
-
-    logger.debug("{} favorites on this tweet.".format(tweet.favorite_count))
+    print(json.dumps(tweet._json, indent=4))
