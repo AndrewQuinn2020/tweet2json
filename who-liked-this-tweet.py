@@ -3,6 +3,7 @@
 # Standard libraries.
 import argparse
 import csv
+import json
 import logging
 import os
 import textwrap
@@ -11,7 +12,6 @@ import textwrap
 # If these are missing, try running the command provided to install them.
 import colorlog  # python -m pip install colorlog
 import tweepy as tw  # python -m pip install tweepy
-from arrow import utcnow as now  # python -m pip install arrow
 
 # Setup the colored error message logger.
 logger = logging.getLogger(__file__)
@@ -24,23 +24,18 @@ logger.addHandler(handler)
 # Set up the argument parser.
 parser = argparse.ArgumentParser(
     description=(
-        "Given a Tweet username and a Tweet's URL snowflake, "
-        "print to stdout a list of `@username`s for who liked the tweet."
+        "Given a Tweet snowflake, "
+        "print to stdout a JSON file of everything the Tweet API exposes."
     )
 )
 
-parser.add_argument(
-    "username",
-    type=str,
-    nargs=1,
-    help="The username part of `https://twitter.com/username/status/snowflake`.",
-)
 parser.add_argument(
     "snowflake",
     type=str,
     nargs=1,
     help="The snowflake part of `https://twitter.com/username/status/snowflake`.",
 )
+
 parser.add_argument(
     "-v",
     "--verbose",
@@ -58,18 +53,7 @@ pwd = os.path.dirname(os.path.abspath(__file__))
 
 
 def set_verbosity(args):
-    """Given a `Namespace()` with a `verbose` and a `quiet` variable,
-    sets the global logger debug level.
-
-    If args.quiet=True, logging is turned off entirely. This overrides
-    everything else. You could actually turn it back on later by setting
-
-            logger.disabled = False
-
-    if you wanted to oscillate between no logs at all and, say, DEBUG level
-    like a crazy person.
-
-    verbose=None keeps it at WARNING. Otherwise we use an explicit count."""
+    """Set the global logger debug level."""
     if args.verbose is None:
         logger.disabled = True
         return None
@@ -93,17 +77,9 @@ if __name__ == "__main__":
     logger.critical("Verbose mode enabled.")
 
     snowflake = str(args.snowflake[0])
-    username = str(args.username[0])
-
     logger.info("Snowflake passed: {:>40}".format(snowflake))
-    logger.info("Username passed: {:>40}".format(username))
-    logger.debug(
-        "Check against tweet URL https://twitter.com/{}/status/{}".format(
-            username, snowflake
-        )
-    )
 
-    logger.debug("Loading in whatever's in `.env` right now.")
+    logger.info("Loading in whatever's in `.env` right now.")
     with open(".env", "r") as csvfile:
         auth_reader = csv.reader(csvfile)
         for row in auth_reader:
@@ -125,3 +101,12 @@ if __name__ == "__main__":
 
     logger.info("Authenticated with your user data in `.env`.")
     logger.info("Okay, getting who liked the status...")
+
+    tweet = auth_api.statuses_lookup([snowflake])[0]
+    logger.debug(tweet)
+
+    if args.json:
+        with open("tweet.json", "w") as file:
+            json.dump(tweet._json, file, indent=4)
+
+    logger.debug("{} favorites on this tweet.".format(tweet.favorite_count))
