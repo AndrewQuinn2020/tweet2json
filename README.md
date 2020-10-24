@@ -5,7 +5,7 @@ $ python tweet2json.py -h
 usage: tweet2json.py [-h] [-v] snowflake
 
 Given a Tweet snowflake, print to stdout a JSON file of everything the Tweet
-API exposes.
+API exposes. (Requires API keys in `.env`.)
 
 positional arguments:
   snowflake      The snowflake part of
@@ -16,8 +16,7 @@ optional arguments:
   -v, --verbose  Verbose mode; print error messages too. More `v`s for more
                  verbosity; `-v` = critical errors only; `-vvvvv` = debug
                  mode.
-$ 
-
+$
 ```
 
 # Quickstart
@@ -32,7 +31,7 @@ Run `python tweet2json.py 1247616214769086465`.
 
 # Example output
 
-`$ python tweet2json.py 1247616214769086465 | pbcopy`:
+`$ python tweet2json.py 1247616214769086465 | pbcopy` copies the following to the clipboard:
 
 ```json
 {
@@ -85,7 +84,7 @@ Run `python tweet2json.py 1247616214769086465`.
             }
         },
         "protected": false,
-        "followers_count": 4953527,
+        "followers_count": 4953541,
         "friends_count": 4533,
         "listed_count": 27887,
         "created_at": "Tue Mar 21 20:50:14 +0000 2006",
@@ -124,8 +123,8 @@ Run `python tweet2json.py 1247616214769086465`.
     "place": null,
     "contributors": null,
     "is_quote_status": false,
-    "retweet_count": 69877,
-    "favorite_count": 322372,
+    "retweet_count": 69876,
+    "favorite_count": 322373,
     "favorited": false,
     "retweeted": false,
     "possibly_sensitive": false,
