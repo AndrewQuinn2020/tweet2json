@@ -24,7 +24,8 @@ logger.addHandler(handler)
 parser = argparse.ArgumentParser(
     description=(
         "Given a Tweet snowflake, "
-        "print to stdout a JSON file of everything the Tweet API exposes."
+        "print to stdout a JSON file of everything the Tweet API exposes. "
+        "(Requires API keys in `.env`.)"
     )
 )
 
